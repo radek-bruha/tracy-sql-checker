@@ -1,0 +1,105 @@
+<?php declare(strict_types=1);
+
+use Bruha\Tracy\SqlCheckerPanel;
+use Bruha\Tracy\Query;
+
+?>
+<h1>SQL Checker: Logs contains <?=SqlCheckerPanel::number(count($queries))?> queries with <?=SqlCheckerPanel::number(array_sum(array_map(static fn(Query $query): float => $query->getDuration(), $queries)) * 1000, 1)?> ms duration</h1>
+<style>
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] {
+        width: 1250px !important;
+        max-width: 1250px !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] h1 {
+        width: 100% !important;;
+        max-width: 1250px !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] tr th {
+        text-align: center !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] tr th.fixed-width {
+        min-width: 150px !important;
+        width: 150px !important;
+        max-width: 150px !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] tr td {
+        background-color: #FDF5CE !important;
+        vertical-align: middle !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] tr td.link {
+        cursor: pointer !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] tr td.center {
+        text-align: center !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] tr td.fixed-width {
+        min-width: 150px !important;
+        width: 150px !important;
+        max-width: 150px !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] tr.separator td {
+        background-color: #FFFFFF !important;
+    }
+
+    div[id^='tracy-debug-panel-Bruha-Tracy-SqlCheckerPanel'] tbody:last-child tr.separator:last-child {
+        display: none;
+    }
+</style>
+<script>
+    for (const element of document.querySelectorAll('.open-close')) {
+        element.style.display = 'none';
+    }
+
+    function openClose (selector) {
+        for (const element of document.querySelectorAll(`.${selector}`)) {
+            element.style.display = element.style.display === 'none' ? 'table-row-group' : 'none';
+        }
+    }
+</script>
+<div class='tracy-inner'>
+    <table>
+        <thead>
+            <tr>
+                <th class='fixed-width'>Duration / Table</th>
+                <th class='fixed-width'>Query / Type</th>
+                <th>Query / Indexes</th>
+                <th class='fixed-width'>Query / Rows</th>
+                <th class='fixed-width'>Explain / Extra</th>
+            </tr>
+        </thead>
+<?php /** @var Query[] $queries */
+foreach ($queries as $query): ?>
+        <tbody>
+            <tr>
+                <td class='fixed-width center'><?=SqlCheckerPanel::number($query->getDuration() * 1000, 1)?> ms</td>
+                <td colspan='3' class='center'><strong><?=$query->getQuery()?></strong></td>
+                <td class='fixed-width link center' onclick="openClose('hash-<?=md5($query->getQuery())?>');">Explain</td>
+            </tr>
+        </tbody>
+        <tbody class='open-close hash-<?=md5($query->getQuery())?>'>
+<?php foreach ($query->getExplain() as $explain): ?>
+            <tr>
+                <td class='fixed-width center'><?=$explain->getTable() ?></td>
+                <td class='fixed-width center'><?=$explain->getType()?></td>
+                <td class='center'><?=$explain->getKey() ?: 'None'?><?=$explain->getKeys() ? sprintf(' (%s)', ($explain->getKeys())) : ''?></td>
+                <td class='fixed-width center'><?=SqlCheckerPanel::number($explain->getRows())?> (<?=$explain->getFiltered()?>%)</td>
+                <td class='fixed-width center'><?=$explain->getExtra()?></td>
+            </tr>
+<?php endforeach; ?>
+        </tbody>
+        <tbody>
+            <tr class='separator'>
+                <td colspan='5' class='separator'>&nbsp;</td>
+            </tr>
+        </tbody>
+<?php endforeach; ?>
+    </table>
+</div>

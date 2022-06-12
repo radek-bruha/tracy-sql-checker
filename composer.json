@@ -1,0 +1,21 @@
+{
+    "name": "radek-bruha/tracy-sql-checker",
+    "description": "Tracy Sql Checker Extension",
+    "license": "unlicense",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Bruha\\Tracy\\": "src"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "doctrine/orm": "^2.12",
+        "tracy/tracy": "^2.9"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}
