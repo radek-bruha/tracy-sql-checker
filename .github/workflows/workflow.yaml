@@ -19,7 +19,7 @@ jobs:
             -   name: Step
                 run: |
                     composer install --no-ansi
-                    phpstan analyse src -l 8 --no-ansi
+                    phpstan analyse src -l 8 --no-ansi --xdebug
             -   uses: Mattraks/delete-workflow-runs@v2
                 with:
                     token: ${{ github.token }}

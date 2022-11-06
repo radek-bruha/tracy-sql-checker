@@ -2,6 +2,7 @@
 
 namespace Bruha\Tracy;
 
+use DateTimeInterface;
 use Doctrine\DBAL\Logging\SQLLogger as BaseSqlLogger;
 
 /**
@@ -31,6 +32,12 @@ final class SqlLogger implements BaseSqlLogger
     {
         if (str_contains($query, 'SELECT')) {
             if ($parameters) {
+                foreach ($parameters as $key => $parameter) {
+                    if ($parameter instanceof DateTimeInterface) {
+                        $parameters[$key] = $parameter->format('Y-m-d H:i:s');
+                    }
+                }
+
                 $query = sprintf('%s;', sprintf(str_replace('?', "'%s'", $query), ...$parameters));
             } else {
                 $query = sprintf('%s;', str_replace('?', "'%s'", $query));
