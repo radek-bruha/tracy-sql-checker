@@ -1,6 +1,6 @@
 # [**Tracy**](https://github.com/nette/tracy) [**Sql**](https://github.com/doctrine/orm) Checker
 [![Downloads](https://img.shields.io/packagist/dt/radek-bruha/tracy-sql-checker.svg?style=flat-square)](https://packagist.org/packages/radek-bruha/tracy-sql-checker)
-[![Build Status](https://img.shields.io/github/workflow/status/radek-bruha/tracy-sql-checker/Workflow?style=flat-square)](https://github.com/radek-bruha/tracy-sql-checker/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/radek-bruha/tracy-sql-checker/.github/workflows/workflow.yaml?style=flat-square)](https://github.com/radek-bruha/tracy-sql-checker/actions)
 [![Latest Stable Version](https://img.shields.io/github/release/radek-bruha/tracy-sql-checker.svg?style=flat-square)](https://github.com/radek-bruha/tracy-sql-checker/releases)
 
 **Usage**

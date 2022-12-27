@@ -10,9 +10,9 @@ on:
 jobs:
     job:
         name: Job
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
             -   uses: shivammathur/setup-php@v2
                 with:
                     tools: phpstan
