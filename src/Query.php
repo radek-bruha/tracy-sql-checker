@@ -3,37 +3,12 @@
 namespace Bruha\Tracy;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 
-/**
- * Class Query
- *
- * @package Bruha\Tracy
- */
 final class Query
 {
 
-    /**
-     * Query constructor
-     */
-    public function __construct()
-    {
-        $this->timestamp = new DateTimeImmutable();
-    }
-
-    /**
-     * @var DateTimeImmutable
-     */
     private DateTimeImmutable $timestamp;
-
-    /**
-     * @var string
-     */
-    private string $query;
-
-    /**
-     * @var float
-     */
-    private float $duration;
 
     /**
      * @var Explain[]
@@ -41,63 +16,63 @@ final class Query
     private array $explain = [];
 
     /**
-     * @return DateTimeImmutable
+     * @param mixed[]   $parameters
+     * @param mixed[][] $backtraces
      */
+    public function __construct(
+        private readonly string $query,
+        private readonly float $duration,
+        private readonly array $parameters,
+        private readonly array $backtraces,
+    ) {
+        $this->timestamp = new DateTimeImmutable();
+    }
+
     public function getTimestamp(): DateTimeImmutable
     {
         return $this->timestamp;
     }
 
-    /**
-     * @param DateTimeImmutable $timestamp
-     *
-     * @return Query
-     */
-    public function setTimestamp(DateTimeImmutable $timestamp): Query
-    {
-        $this->timestamp = $timestamp;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getQuery(): string
     {
         return $this->query;
     }
 
-    /**
-     * @param string $query
-     *
-     * @return Query
-     */
-    public function setQuery(string $query): Query
-    {
-        $this->query = $query;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
     public function getDuration(): float
     {
         return $this->duration;
     }
 
     /**
-     * @param float $duration
-     *
-     * @return Query
+     * @return mixed[]
      */
-    public function setDuration(float $duration): Query
+    public function getParameters(): array
     {
-        $this->duration = $duration;
+        return $this->parameters;
+    }
 
-        return $this;
+    /**
+     * @return mixed[]
+     */
+    public function getBacktraces(): array
+    {
+        return $this->backtraces;
+    }
+
+    /**
+     * @return mixed[][]
+     */
+    public function getFormattedBacktraces(): array
+    {
+        $directory = sprintf('%s/', getcwd());
+
+        return array_map(
+            static fn(array $backtrace): array => [
+                sprintf('%s::%s', $backtrace['class'], $backtrace['function']),
+                isset($backtrace['file']) && isset($backtrace['line']) ? sprintf('%s:%s', str_replace($directory, '', $backtrace['file']), $backtrace['line']) : '',
+            ],
+            $this->backtraces,
+        );
     }
 
     /**
@@ -110,14 +85,37 @@ final class Query
 
     /**
      * @param Explain[] $explain
-     *
-     * @return Query
      */
     public function setExplain(array $explain): Query
     {
         $this->explain = $explain;
 
         return $this;
+    }
+
+    public function addExplain(Explain $explain): Query
+    {
+        $this->explain[] = $explain;
+
+        return $this;
+    }
+
+    public function getExplainQuery(): string
+    {
+        return sprintf('EXPLAIN EXTENDED %s', $this->query);
+    }
+
+    public function getParameterizedQuery(): string
+    {
+        $parameters = $this->parameters;
+
+        foreach ($parameters as $key => $parameter) {
+            if ($parameter instanceof DateTimeInterface) {
+                $parameters[$key] = $parameter->format('Y-m-d H:i:s');
+            }
+        }
+
+        return sprintf('%s;', sprintf(str_replace('?', "'%s'", $this->query), ...$parameters));
     }
 
 }

@@ -2,87 +2,56 @@
 
 namespace Bruha\Tracy;
 
-/**
- * Class Explain
- *
- * @package Bruha\Tracy
- */
 final class Explain
 {
 
     /**
-     * Explain constructor
-     *
-     * @param string $table
-     * @param string $type
-     * @param string $keys
-     * @param string $key
-     * @param int    $rows
-     * @param int    $filtered
-     * @param string $extra
+     * @param string[] $keys
      */
     public function __construct(
         private readonly string $table,
         private readonly string $type,
-        private readonly string $keys,
+        private readonly array $keys,
         private readonly string $key,
         private readonly int $rows,
         private readonly int $filtered,
-        private readonly string $extra
+        private readonly string $extra,
     ) {
     }
 
-    /**
-     * @return string
-     */
     public function getTable(): string
     {
         return $this->table;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
     /**
-     * @return string
+     * @return string[]
      */
-    public function getKeys(): string
+    public function getKeys(): array
     {
         return $this->keys;
     }
 
-    /**
-     * @return string
-     */
     public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @return int
-     */
     public function getRows(): int
     {
         return $this->rows;
     }
 
-    /**
-     * @return int
-     */
     public function getFiltered(): int
     {
         return $this->filtered;
     }
 
-    /**
-     * @return string
-     */
     public function getExtra(): string
     {
         return $this->extra;

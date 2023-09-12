@@ -17,6 +17,9 @@ Tracy\Debugger::getBar()->addPanel(new \Bruha\Tracy\SqlCheckerPanel());
 ```yml
 tracy:
     bar: [\Bruha\Tracy\SqlCheckerPanel()]
+
+services:
+    - Bruha\Tracy\Middleware\Logger
 ```
 
 **Example Website Usage**
